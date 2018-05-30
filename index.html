@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>我的导航</title>
     <link rel="stylesheet" href="./cssstyle.css">
 </head>
+
 <body>
     <header></header>
     <main>
@@ -16,52 +18,143 @@
     </main>
     <footer></footer>
     <script>
-        keys={
-            0:{0:'q',1:'w',2:'e',3:'r',4:'t',5:'y',6:'u',7:'i',8:'o',9:'p',length : 10 },
-            1:{0:'a',1:'s',2:'d',3:'f',4:'g',5:'h',6:'j',7:'k',8:'l',length : 9 },
-            2:{0:'z',1:'x',2:'c',3:'v',4:'b',5:'n',6:'m',length : 7 },
-            'length': 3
-        }
-        hash={'q':'qq.com','w':'weibo.com','e':'ele.me','r':'renrne.com','t':'tianya.com','y':'yahu.com','i':'iqiyi.com','o':'opear.com','p':undefined,'a':'acfun.com','s':'souhu.com','b':'bilibili.com'        
-        }
-        hashinlocalstorage = JSON.parse(localStorage.getItem('uuu')||'null')
-        index=0
-        while (index<keys['length']) {
-            div1=document.createElement('div')
-            mainxxx.appendChild(div1)
-            row=keys[index]
-            index2=0
-            while (index2<row['length']) {
-            keybord=document.createElement('kbd')
-            keybord.textContent=row[index2]
-            div1.appendChild(keybord)
-            button=document.createElement('button')
-            button.textContent='E'
-            button.id=row[index2]
-            keybord.appendChild(button)
-            button.onclick=function(xzkjcnxlkcjlk){
-                key = xzkjcnxlkcjlk['target']['id']
-                x=prompt('给我一个网址')
-                hash[key]=x
-                localStorage.setItem('uuu',JSON.stringify(hash))
+
+
+        // 1.初始化数据
+        var object = init()
+        var keys = object['keys']
+        var hash = object['hash']
+        // 2.生成键盘
+        createKeybord(keys, hash)
+        // 3.监听键盘
+        listenUser(keys)
+
+
+
+
+        //下面是工具函数
+        //初始化数据
+        function init() {
+            var keys = {
+                0: { 0: 'q', 1: 'w', 2: 'e', 3: 'r', 4: 't', 5: 'y', 6: 'u', 7: 'i', 8: 'o', 9: 'p', length: 10 },
+                1: { 0: 'a', 1: 's', 2: 'd', 3: 'f', 4: 'g', 5: 'h', 6: 'j', 7: 'k', 8: 'l', length: 9 },
+                2: { 0: 'z', 1: 'x', 2: 'c', 3: 'v', 4: 'b', 5: 'n', 6: 'm', length: 7 },
+                'length': 3
             }
-            index2=index2+1   
+            var hash = {
+                'q': 'qq.com', 'w': 'weibo.com', 'f':'iciba.com','e': 'ele.me', 'r': 'zimuzu.tv', 't': 'tmall.com', 'y': 'youtube.com', 'i': 'iqiyi.com', 'o': 'opear.com', 'p': undefined, 'a': 'acfun.cn', 's': 'sm.ms', 'b': 'bilibili.com', 'j': 'javascript.ruanyifeng.com', 'm': 'developer.mozilla.org', 'x': 'xiedaimala.com', 'g': 'github.com'
             }
-        index=index+1
-        }
-        document.onkeypress=function(xzkjcnxlkcjlk){
-            key=xzkjcnxlkcjlk['key']
-            website=hash[key]
-            window.open('http://' + website, '_blank')
-        
+            var hashinlocalstorage = JSON.parse(localStorage.getItem('uuu') || 'null')
+            if (hashinlocalstorage) {
+                hash = hashinlocalstorage
+            }
+            return { "keys": keys, "hash": hash }
         }
 
-        
-        
-        
-        
-        
-        </script>
+        //生成标签
+        function tag(tagName) {
+            return document.createElement(tagName)
+        }
+
+        //生成图标
+        function createImg(domain) {
+            var image = tag('img')
+            image.className = 'icon'
+            if (domain) {
+                image.src = 'http://' + domain + '/favicon.ico'
+            } else {
+                image.src = '//i.loli.net/2018/05/29/5b0cc7896c09f.png'
+            }
+            image.onerror = function (wrong) {
+                console.log(wrong)
+                wrong.target.src = '//i.loli.net/2018/05/29/5b0cc7896c09f.png'
+            }
+            return image
+        }
+
+        //生成编辑按钮
+        function createButton(id) {
+            var button = tag('button')
+            button.className = 'btn'
+            button.id = id
+            button.onclick = function (xzkjcnxlkcjlk) {
+                var button2 = xzkjcnxlkcjlk['target']
+                var image2 = button2.previousSibling
+                var key = button2['id']
+                var y = hash[key]
+                var x = prompt('给我一个新的网址', y)
+                if (x == null) {
+                    x = y
+                }
+                image2.src = 'http://' + x + '/favicon.ico'
+                image2.onerror = function (wrong) {
+                    wrong.target.src = '//i.loli.net/2018/05/29/5b0cc7896c09f.png'
+                }
+                hash[key] = x
+                localStorage.setItem('uuu', JSON.stringify(hash))
+            }
+            return button
+        }
+
+        //生成按键
+        function createKey(id) {
+            var keybord = tag('kbd')
+            keybord.textContent = id
+            keybord.className = 'key'
+            keybord.id = id + '2'
+            // 点击按钮跳转
+            keybord.onclick = function (xxxx) {
+                var key = xxxx['target']['id']
+                var key2 = key.slice(0, 1);
+                var website = hash[key2]
+                window.open('http://' + website, '_blank')
+            }
+            return keybord
+        }
+
+        //生成整个键盘
+        function createKeybord(keys, hash) {
+            for (var index = 0; index < keys['length']; index = index + 1) {
+
+                var div1 = tag('div')
+                div1.className = 'row'
+
+
+                var row = keys[index]
+                for (index2 = 0; index2 < row['length']; index2 = index2 + 1) {
+
+
+                    var image = createImg(hash[row[index2]])
+
+
+                    var button = createButton(row[index2])
+
+
+                    var keybord = createKey(row[index2])
+
+
+                    mainxxx.appendChild(div1)
+                    div1.appendChild(keybord)
+                    keybord.appendChild(image)
+                    keybord.appendChild(button)
+                }
+
+            }
+        }
+
+        //按键监听
+        function listenUser(keys) {
+            document.onkeypress = function (xzkjcnxlkcjlk) {
+                var key = xzkjcnxlkcjlk['key']
+                var website = hash[key]
+                window.open('http://' + website, '_blank')
+            }
+
+        }
+
+
+
+    </script>
 
 
 
@@ -78,4 +171,5 @@
 
 
 </body>
+
 </html>
